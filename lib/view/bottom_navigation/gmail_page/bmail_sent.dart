@@ -260,7 +260,7 @@ class _BmailSentState extends State<BmailSent> {
   }
 
   Future<void> _fetchEmails() async {
-    final url = 'https://petdoctorindia.in/sent';
+    final url = 'https://apiv2.bmail.biz/sent';
     try {
       final response = await http.post(
         Uri.parse(url),

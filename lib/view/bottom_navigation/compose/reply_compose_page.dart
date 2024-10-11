@@ -82,7 +82,7 @@ class _ReplyComposePageState extends State<ReplyComposePage> {
       return;
     }
 
-    final Uri apiUri = Uri.parse('https://petdoctorindia.in/reply');
+    final Uri apiUri = Uri.parse('https://apiv2.bmail.biz/reply');
 
     try {
       final response = await http.post(

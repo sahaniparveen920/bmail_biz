@@ -44,7 +44,7 @@
 //   }
 //
 //   Future<List<Email>> _fetchEmailData(String category) async {
-//     final url = 'https://petdoctorindia.in/inbox/$category';
+//     final url = 'https://apiv2.bmail.biz/inbox/$category';
 //     final response = await http.post(
 //       Uri.parse(url),
 //       headers: {

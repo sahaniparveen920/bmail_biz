@@ -10,7 +10,6 @@ class TermServicePage extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Icon(Icons.chevron_left),
             SizedBox(
               width: 30,
             ),

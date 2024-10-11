@@ -138,7 +138,7 @@ class _ForwardComposePageState extends State<ForwordComposePage> {
       return;
     }
 
-    final Uri apiUri = Uri.parse('https://petdoctorindia.in/forward');
+    final Uri apiUri = Uri.parse('https://apiv2.bmail.biz/forward');
 
     try {
       final response = await http.post(

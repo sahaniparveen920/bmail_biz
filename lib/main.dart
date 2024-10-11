@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:Bmail/routes/routes.dart';
 import 'package:Bmail/utils/custom_color.dart';
 import 'package:Bmail/utils/strings.dart';
@@ -7,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -34,5 +37,13 @@ class MyApp extends StatelessWidget {
           initialRoute: Routes.splashScreen,
           getPages: Routes.list,
         ));
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   }
 }

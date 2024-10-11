@@ -32,7 +32,7 @@ class PrimaryButtonWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold)),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5.0),
+                  borderRadius: BorderRadius.circular(15.0),
                   side: BorderSide(color: Colors.red.withOpacity(0))),
             )),
         child: Text(title),

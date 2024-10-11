@@ -28,6 +28,8 @@ class _ComposePageState extends State<ComposePage> {
   bool isItalic = false;
   bool isUnderline = false;
 
+  bool _isLoading = false;
+
   TextStyle _getTextStyle() {
     return TextStyle(
       fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
@@ -55,6 +57,10 @@ class _ComposePageState extends State<ComposePage> {
   }
 
   void _sendMail() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final int? userId = prefs.getInt('user_id');
     final String from = prefs.getString('user_email') ?? 'unknown@domain.com';
@@ -66,6 +72,9 @@ class _ComposePageState extends State<ComposePage> {
     final String message = _messageController.text.trim();
 
     if (userId == null) {
+      setState(() {
+        _isLoading = false;
+      });
       Get.snackbar(
         'Error',
         'User ID is missing!',
@@ -76,7 +85,7 @@ class _ComposePageState extends State<ComposePage> {
       return;
     }
 
-    final Uri apiUri = Uri.parse('https://petdoctorindia.in/send');
+    final Uri apiUri = Uri.parse('https://apiv2.bmail.biz/send');
 
     try {
       final response = await http.post(
@@ -118,6 +127,10 @@ class _ComposePageState extends State<ComposePage> {
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -132,6 +145,7 @@ class _ComposePageState extends State<ComposePage> {
       // User canceled the picker
     }
   }
+
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -158,149 +172,170 @@ class _ComposePageState extends State<ComposePage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-        Row(
+      body: Stack(
         children: [
-        Expanded(
-        child: TextField(
-          controller: _toController,
-          decoration: InputDecoration(
-            labelText: 'To',
-            labelStyle: TextStyle(color: Colors.grey),
-            border: InputBorder.none,
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _toController,
+                        decoration: InputDecoration(
+                          labelText: 'To',
+                          labelStyle: TextStyle(color: Colors.grey),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          showCc = !showCc;
+                        });
+                      },
+                      child: Text(
+                        showCc ? 'Hide Cc' : 'Cc',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          showBcc = !showBcc;
+                        });
+                      },
+                      child: Text(
+                        showBcc ? 'Hide Bcc' : 'Bcc',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                  ],
+                ),
+                if (showCc)
+                  TextField(
+                    controller: _ccController,
+                    decoration: InputDecoration(
+                      labelText: 'Cc',
+                      labelStyle: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                if (showBcc)
+                  TextField(
+                    controller: _bccController,
+                    decoration: InputDecoration(
+                      labelText: 'Bcc',
+                      labelStyle: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                Divider(),
+                TextField(
+                  controller: _subjectController,
+                  decoration: InputDecoration(
+                    labelText: 'Subject',
+                    labelStyle: TextStyle(color: Colors.grey),
+                    border: InputBorder.none,
+                  ),
+                ),
+                Divider(),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            DropdownButton<String>(
+                              items: [
+                                DropdownMenuItem(
+                                  child: Text("Normal"),
+                                  value: "Normal",
+                                ),
+                                DropdownMenuItem(
+                                  child: Text("Heading"),
+                                  value: "Heading",
+                                ),
+                              ],
+                              onChanged: (value) {},
+                              hint: Text("Normal"),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.format_bold),
+                              iconSize: iconSize,
+                              onPressed: _toggleBold,
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.format_italic),
+                              iconSize: iconSize,
+                              onPressed: _toggleItalic,
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.format_underline),
+                              iconSize: iconSize,
+                              onPressed: _toggleUnderline,
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.attach_file),
+                              iconSize: iconSize,
+                              onPressed: _pickFile,
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.image),
+                              iconSize: iconSize,
+                              onPressed: _pickImage,
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: _messageController,
+                            maxLines: null,
+                            style: _getTextStyle(),
+                            decoration: InputDecoration(
+                              hintText: 'Compose your message here...',
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
-      TextButton(
-        onPressed: () {
-          setState(() {
-            showCc = !showCc;
-          });
-        },
-        child: Text(
-          showCc ? 'Hide Cc' : 'Cc',
-          style: TextStyle(color: Colors.blue),
-        ),
-      ),
-      SizedBox(width: 16),
-      TextButton(
-        onPressed: () {
-          setState(() {
-            showBcc = !showBcc;
-          });
-        },
-        child: Text(
-          showBcc ? 'Hide Bcc' : 'Bcc',
-          style: TextStyle(color: Colors.blue),
-        ),
-      ),
-      ],
-    ),
-    if (showCc)
-    TextField(
-    controller: _ccController,
-    decoration: InputDecoration(
-    labelText: 'Cc',
-    labelStyle: TextStyle(color: Colors.grey),
-    ),
-    ),
-    if (showBcc)
-    TextField(
-    controller: _bccController,
-    decoration: InputDecoration(
-    labelText: 'Bcc',
-    labelStyle: TextStyle(color: Colors.grey),
-    ),
-    ),
-    Divider(),
-    TextField(
-    controller: _subjectController,
-    decoration: InputDecoration(
-    labelText: 'Subject',
-    labelStyle: TextStyle(color: Colors.grey),
-    border: InputBorder.none,
-    ),
-    ),
-    Divider(),
-    Expanded(
-    child: Container(
-    decoration: BoxDecoration(
-    border: Border.all(color: Colors.grey.shade300),
-    borderRadius: BorderRadius.circular(8.0),
-    ),
-    padding: EdgeInsets.all(8.0),
-    child: Column(
-    children: [
-    Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-    DropdownButton<String>(
-    items: [
-    DropdownMenuItem(
-    child: Text("Normal"),
-    value: "Normal",
-    ),
-    DropdownMenuItem(
-    child: Text("Heading"),
-    value: "Heading",
-    ),
-    ],
-    onChanged: (value) {},
-    hint: Text("Normal"),
-    ),
-      IconButton(
-        icon: Icon(Icons.format_bold),
-        iconSize: iconSize,
-        onPressed: _toggleBold,
-      ),
-      IconButton(
-        icon: Icon(Icons.format_italic),
-        iconSize: iconSize,
-        onPressed: _toggleItalic,
-      ),
-      IconButton(
-        icon: Icon(Icons.format_underline),
-        iconSize: iconSize,
-        onPressed: _toggleUnderline,
-      ),
-      IconButton(
-        icon: Icon(Icons.attach_file),
-        iconSize: iconSize,
-        onPressed: _pickFile,
-      ),
-      IconButton(
-        icon: Icon(Icons.image),
-        iconSize: iconSize,
-        onPressed: _pickImage,
-      ),
-    ],
-    ),
-      Expanded(
-        child: TextField(
-          controller: _messageController,
-          maxLines: null,
-          style: _getTextStyle(),
-          decoration: InputDecoration(
-            hintText: 'Compose your message here...',
-            border: InputBorder.none,
-          ),
-        ),
-      ),
-    ],
-    ),
-    ),
-    ),
-          ],
-        ),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _sendMail,
-        label: Text("Send", style: TextStyle(color: Colors.white)),
-        icon: Icon(Icons.send, color: Colors.white),
-        backgroundColor: Colors.blue,
+        label: _isLoading
+            ? SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 2.0,
+          ),
+        )
+            : Text(
+          'Send',
+          style: TextStyle(color: Colors.white),
+        ),
+        icon: _isLoading
+            ? null
+            : Icon(
+          Icons.send,
+          color: Colors.white,
+        ),
+        backgroundColor: CustomColor.secondaryColor,
       ),
     );
   }

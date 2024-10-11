@@ -9,7 +9,7 @@ class ForwardButton extends StatelessWidget {
   const ForwardButton({required this.userId, required this.userEmail});
 
   Future<void> _handleForwardAction() async {
-    final url = 'https://petdoctorindia.in/forward';
+    final url = 'https://apiv2.bmail.biz/forward';
     final headers = {'Content-Type': 'application/json'};
     final body = jsonEncode({
       'userid': userId,

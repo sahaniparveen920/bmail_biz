@@ -55,7 +55,7 @@ class _EmailDetailPageState extends State<EmailDetailPage> {
   }
 
   Future<void> _deleteEmail(BuildContext context) async {
-    final String apiUrl = 'https://petdoctorindia.in/trash'; // API endpoint
+    final String apiUrl = 'https://apiv2.bmail.biz/trash'; // API endpoint
 
     // Prepare the request body according to the new API format
     final requestBody = jsonEncode({
@@ -346,7 +346,7 @@ class _BmailMainPageState extends State<BmailMainPage> {
 
 
   Future<void> _fetchEmails() async {
-    final url = 'https://petdoctorindia.in/inbox';
+    final url = 'https://apiv2.bmail.biz/inbox';
     try {
       final response = await http.post(
         Uri.parse(url),

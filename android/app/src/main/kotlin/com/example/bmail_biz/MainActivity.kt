@@ -1,4 +1,4 @@
-package com.example.bmail_biz
+package com.bmail.biz
 
 import io.flutter.embedding.android.FlutterActivity
 

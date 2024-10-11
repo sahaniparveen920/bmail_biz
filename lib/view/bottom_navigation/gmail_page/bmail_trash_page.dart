@@ -271,7 +271,7 @@ class _BmailTrashPageState extends State<BmailTrashPage> {
   }
 
   Future<void> fetchTrashedEmails() async {
-    const String apiUrl = 'https://petdoctorindia.in/gettrash';
+    const String apiUrl = 'https://apiv2.bmail.biz/gettrash';
     final Map<String, dynamic> body = {
       "userId": _userId,
       "email": _userEmail,
@@ -333,7 +333,7 @@ class _BmailTrashPageState extends State<BmailTrashPage> {
       return; // Exit the function if there are no message IDs
     }
 
-    final String url = 'https://petdoctorindia.in/deletetrash';
+    final String url = 'https://apiv2.bmail.biz/deletetrash';
 
     final Map<String, dynamic> body = {
       "userId": _userId, // Replace with actual user ID if needed

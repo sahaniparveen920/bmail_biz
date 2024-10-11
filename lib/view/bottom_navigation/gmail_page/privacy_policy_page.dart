@@ -10,7 +10,6 @@ class PrivacyPolicyPage extends StatelessWidget {
         appBar: AppBar(
           title: Row(
             children: [
-              Icon(Icons.chevron_left_outlined),
               SizedBox(width: 30,),
               const Text('Privacy Policy'),
             ],

@@ -242,7 +242,7 @@ class _BmailDraftPageState extends State<BmailDraftPage> {
   }
 
   Future<void> fetchTrashedEmails() async {
-    const String apiUrl = 'https://petdoctorindia.in/Drafts';
+    const String apiUrl = 'https://apiv2.bmail.biz/Drafts';
     final Map<String, dynamic> body = {
       "userId": _userId,
       "email": _userEmail,
